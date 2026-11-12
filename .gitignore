@@ -1,0 +1,4 @@
+*.log
+*.pid
+stop-clicker.flag
+node_modules/
