@@ -6,19 +6,25 @@ const once=process.argv.includes('--once');
 function log(s){const line=`${new Date().toLocaleString()} ${s}`;console.log(line);appendFileSync(logFile,line+'\n');}
 const expression=`(()=>{
  if(location.hostname!=='www.nexusmods.com'&&location.hostname!=='nexusmods.com')return 'Wrong site';
- const roots=[document],seen=new Set();let count=0;
+ const roots=[document],seen=new Set(),candidates=[];let count=0;
  while(roots.length){const root=roots.shift();if(seen.has(root))continue;seen.add(root);
  for(const e of root.querySelectorAll('*')){
  if(e.shadowRoot)roots.push(e.shadowRoot);
  if(e.tagName==='IFRAME'){try{if(e.contentDocument)roots.push(e.contentDocument)}catch{}}
  if(!e.matches('button,a,input[type="button"],[role="button"]'))continue;
  const text=(e.innerText||e.textContent||e.value||'').replace(/\\s+/g,' ').trim();
- if(!/^slow\\s*download$/i.test(text))continue;count++;
+ if(!/^(?:slow|standard)\\s*download$/i.test(text))continue;count++;
  const r=e.getBoundingClientRect(),s=getComputedStyle(e);
  if(!r.width||!r.height||s.visibility==='hidden'||s.display==='none'||e.disabled||e.getAttribute('aria-disabled')==='true')continue;
- if(Date.now()-(window.__nolvusLastSlowClick||0)<20000)return 'Waiting after previous click';
- window.__nolvusLastSlowClick=Date.now();e.click();return 'Clicked Slow download (including shadow DOM)';
- }}return 'Waiting for Slow download ('+count+' matching buttons)';
+ candidates.push({e,text});
+ }}
+ candidates.sort((a,b)=>Number(/^standard/i.test(b.text))-Number(/^standard/i.test(a.text)));
+ const candidate=candidates[0];
+ if(!candidate)return 'Waiting for Slow download or Standard download ('+count+' matching buttons)';
+ const {e,text}=candidate,key=text.toLowerCase().replace(/\\s+/g,' ');
+ const clicks=window.__nolvusDownloadClicks||(window.__nolvusDownloadClicks={});
+ if(Date.now()-(clicks[key]||0)<20000)return 'Waiting after '+text+' click';
+ clicks[key]=Date.now();e.click();return 'Clicked '+text+' (including shadow DOM)';
 })()`;
 async function evaluate(target){return new Promise((resolve,reject)=>{
  const u=new URL(target.webSocketDebuggerUrl);if(!['localhost','127.0.0.1','[::1]'].includes(u.hostname))return reject(Error('Nonlocal debug socket refused'));

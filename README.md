@@ -1,8 +1,8 @@
 # Nolvus Background Clicker
 
-Click Nexus Mods' **Slow download** button inside Nolvus Dashboard while keeping your mouse free for gaming or other apps.
+Click Nexus Mods' **Slow download** or **Standard download** button inside Nolvus Dashboard while keeping your mouse free for gaming or other apps.
 
-This unofficial tool connects to Dashboard's local browser debugging port. It searches normal page content, open shadow DOM, and accessible frames for a visible, enabled button labelled exactly **Slow download**. It does not move the system cursor or activate windows.
+This unofficial tool connects to Dashboard's local browser debugging port. It searches normal page content, open shadow DOM, and accessible frames for a visible, enabled button labelled exactly **Slow download** or **Standard download**. It does not move the system cursor or activate windows.
 
 ## Requirements
 
@@ -56,7 +56,7 @@ It does not use the old Go downloader or its browser-protocol event decoder. Coo
 - **Node is not recognized:** install Node.js 24 or newer and reopen your terminal or launcher.
 - **Cannot find module:** extract all files together and run the launcher beside the `.mjs` file.
 - **Connection error:** check Dashboard was started with the debugging flag. Open `http://localhost:8088/json/list` in your browser to check the endpoint.
-- **Waiting for Slow download:** finish login, cookie choices, or verification manually. The tool only clicks the download button; it does not solve verification challenges.
+- **Waiting for Slow download or Standard download:** finish login, cookie choices, or verification manually. The tool only clicks the download button; it does not solve verification challenges.
 - **Button stays visible:** Nexus markup may have changed. Include the error and Dashboard version in a GitHub issue. Review logs before sharing them; they contain timestamps and mod titles.
 
 Logs are written to `nolvus-clicker.log` beside the script. Logs and stop flags are excluded by `.gitignore`.
